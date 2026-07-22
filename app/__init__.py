@@ -1,12 +1,12 @@
+import os
+import logging
+from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
-import os
-import logging
-from logging.handlers import RotatingFileHandler
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -15,34 +15,24 @@ csrf = CSRFProtect()
 migrate = Migrate()
 
 def create_app():
-    app = Flask(__name__, 
-                template_folder='templates',
-                static_folder='static')
+    # Get the absolute path to the app directory
+    app_dir = os.path.dirname(os.path.abspath(__file__))
+    template_dir = os.path.join(app_dir, 'templates')
+    static_dir = os.path.join(app_dir, 'static')
     
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-change-this')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        'pool_size': 10,
-        'pool_recycle': 300,
-        'pool_pre_ping': True
-    }
+    app = Flask(__name__,
+                template_folder=template_dir,
+                static_folder=static_dir)
     
+    app.config.from_object('config.config.Config')
+    
+    # Mail settings
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
-    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '')
-    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME', '')
-    
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads')
-    app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-    
-    app.config['PERMANENT_SESSION_LIFETIME'] = 86400
-    app.config['SESSION_COOKIE_SECURE'] = True
-    app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
     
     db.init_app(app)
     login_manager.init_app(app)
@@ -54,6 +44,7 @@ def create_app():
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'warning'
     
+    # Import and register blueprints
     from app.routes.auth import auth_bp
     from app.routes.main import main_bp
     from app.routes.wallet import wallet_bp
@@ -70,12 +61,16 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(superadmin_bp, url_prefix='/superadmin')
     
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # Create upload folder
+    upload_folder = os.path.join(app_dir, 'static/uploads')
+    os.makedirs(upload_folder, exist_ok=True)
     
+    # Setup logging
     if not app.debug:
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/bucoinmarket.log', maxBytes=10240, backupCount=10)
+        log_dir = os.path.join(os.path.dirname(app_dir), 'logs')
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, 'bucoinmarket.log')
+        file_handler = RotatingFileHandler(log_file, maxBytes=10240, backupCount=10)
         file_handler.setFormatter(logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
         ))
