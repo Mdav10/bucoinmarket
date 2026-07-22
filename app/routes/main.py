@@ -1,18 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app.models import Product, Order, Transaction, Setting
 from app import db
 from datetime import datetime
-import os
 
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
-    # Debug - check template folder
-    print(f"Template folder: {current_app.template_folder}")
-    print(f"Files in template folder: {os.listdir(current_app.template_folder)}")
-    
     products = Product.query.filter_by(is_active=True).order_by(Product.created_at.desc()).limit(12).all()
     
     site_name = Setting.query.filter_by(setting_key='site_name').first()

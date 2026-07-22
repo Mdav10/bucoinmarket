@@ -15,10 +15,10 @@ csrf = CSRFProtect()
 migrate = Migrate()
 
 def create_app():
-    # Get the absolute path to the app directory
-    app_dir = os.path.dirname(os.path.abspath(__file__))
-    template_dir = os.path.join(app_dir, 'templates')
-    static_dir = os.path.join(app_dir, 'static')
+    # Get the absolute path to the PROJECT root (not app folder)
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    template_dir = os.path.join(base_dir, 'templates')
+    static_dir = os.path.join(base_dir, 'static')
     
     app = Flask(__name__,
                 template_folder=template_dir,
@@ -62,12 +62,12 @@ def create_app():
     app.register_blueprint(superadmin_bp, url_prefix='/superadmin')
     
     # Create upload folder
-    upload_folder = os.path.join(app_dir, 'static/uploads')
+    upload_folder = os.path.join(base_dir, 'static/uploads')
     os.makedirs(upload_folder, exist_ok=True)
     
     # Setup logging
     if not app.debug:
-        log_dir = os.path.join(os.path.dirname(app_dir), 'logs')
+        log_dir = os.path.join(base_dir, 'logs')
         os.makedirs(log_dir, exist_ok=True)
         log_file = os.path.join(log_dir, 'bucoinmarket.log')
         file_handler = RotatingFileHandler(log_file, maxBytes=10240, backupCount=10)
@@ -78,5 +78,7 @@ def create_app():
         app.logger.addHandler(file_handler)
         app.logger.setLevel(logging.INFO)
         app.logger.info('BuCoinMarket startup')
+        app.logger.info(f'Template folder: {template_dir}')
+        app.logger.info(f'Static folder: {static_dir}')
     
     return app
