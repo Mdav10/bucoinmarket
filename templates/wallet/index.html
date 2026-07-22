@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5>Wallet Balance</h5>
+                <h2 class="wallet-balance">{{ "%.2f"|format(balance) }} BUC</h2>
+                <p class="text-muted">1 BUC = {{ buc_rate }} BIF</p>
+                <a href="{{ url_for('wallet.topup') }}" class="btn btn-success">Top Up</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Transaction History</h5>
+            </div>
+            <div class="card-body transaction-list">
+                {% for transaction in transactions %}
+                    <div class="transaction-item {% if transaction.transaction_type == 'topup' or transaction.transaction_type == 'refund' %}credit{% else %}debit{% endif %}">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>{{ transaction.transaction_type|title }}</strong>
+                                <br>
+                                <small class="text-muted">{{ transaction.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <div>
+                                <span class="{% if transaction.transaction_type == 'topup' or transaction.transaction_type == 'refund' %}text-success{% else %}text-danger{% endif %}">
+                                    {% if transaction.transaction_type == 'topup' or transaction.transaction_type == 'refund' %}+{% else %}-{% endif %}
+                                    {{ "%.2f"|format(transaction.amount) }} BUC
+                                </span>
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ transaction.description }}</small>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No transactions yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

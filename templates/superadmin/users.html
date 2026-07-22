@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between mb-4">
+    <h2>Users</h2>
+    <a href="{{ url_for('superadmin.add_user') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add User
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Full Name</th>
+                <th>Role</th>
+                <th>Wallet Balance</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.full_name or 'N/A' }}</td>
+                    <td><span class="badge {% if user.role == 'superadmin' %}bg-danger{% elif user.role == 'admin' %}bg-warning{% else %}bg-primary{% endif %}">{{ user.role|title }}</span></td>
+                    <td>{{ "%.2f"|format(user.wallet_balance) }} BUC</td>
+                    <td>
+                        <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ 'Active' if user.is_active else 'Inactive' }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-warning">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Super Admin Dashboard</h2>
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <h6>Total Users</h6>
+            <div class="stat-number">{{ total_users }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <h6>Admins</h6>
+            <div class="stat-number">{{ total_admins }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <h6>Customers</h6>
+            <div class="stat-number">{{ total_customers }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <h6>Products</h6>
+            <div class="stat-number">{{ total_products }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <h6>Orders</h6>
+            <div class="stat-number">{{ total_orders }}</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <h6>Transactions</h6>
+            <div class="stat-number">{{ total_transactions }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Super Admin Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('superadmin.users') }}" class="btn btn-primary w-100">
+                            <i class="bi bi-people"></i> Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('superadmin.settings') }}" class="btn btn-success w-100">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-info w-100">
+                            <i class="bi bi-dashboard"></i> Admin Panel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        {% if product.image_url %}
+            <img src="{{ url_for('static', filename='uploads/' + product.image_url) }}" class="img-fluid rounded" alt="{{ product.name }}">
+        {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                <i class="bi bi-image display-1 text-secondary"></i>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h2>{{ product.name }}</h2>
+        <p class="text-muted">{{ product.category or 'Uncategorized' }}</p>
+        <h3 class="text-primary">{{ "%.2f"|format(product.price) }} BUC</h3>
+        <p>{{ product.description }}</p>
+        <p><strong>Stock:</strong> {{ product.stock }} units</p>
+        {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('orders.checkout') }}">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                </div>
+                <button type="submit" class="btn btn-success w-100" {% if product.stock == 0 %}disabled{% endif %}>
+                    <i class="bi bi-wallet2"></i> Pay with BuCoin
+                </button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary w-100">Login to Purchase</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

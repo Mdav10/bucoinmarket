@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4>Top Up Wallet</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    Current Balance: <strong>{{ "%.2f"|format(balance) }} BUC</strong>
+                </div>
+                <form method="POST" action="{{ url_for('wallet.topup') }}">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount (BIF)</label>
+                        <input type="number" class="form-control" id="amount" name="amount" min="100" step="100" required>
+                        <small class="text-muted">Minimum: 100 BIF</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label">Payment Method</label>
+                        <select class="form-control" id="payment_method" name="payment_method" required>
+                            <option value="mobile_money">Mobile Money</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="lumicash">Lumicash</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Top Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
