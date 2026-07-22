@@ -34,6 +34,9 @@ class User(UserMixin, db.Model):
     def has_role(self, role):
         return self.role == role or self.role == 'superadmin'
     
+    def get_id(self):
+        return str(self.id)
+    
     def __repr__(self):
         return f'<User {self.username}>'
 

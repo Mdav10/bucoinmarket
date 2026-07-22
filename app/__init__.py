@@ -3,7 +3,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin
 from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
 from flask_migrate import Migrate
@@ -40,9 +40,16 @@ def create_app():
     csrf.init_app(app)
     migrate.init_app(app, db)
     
+    # Configure login manager
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'warning'
+    
+    # IMPORTANT: Define user_loader
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models import User
+        return User.query.get(int(user_id))
     
     # Import and register blueprints
     from app.routes.auth import auth_bp
