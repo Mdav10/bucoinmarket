@@ -11,12 +11,10 @@ class Config:
         'pool_pre_ping': True
     }
     
-    # Security
+    # Security - Disable CSRF for now
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-this')
-    WTF_CSRF_ENABLED = True
-    WTF_CSRF_SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-this')
-    WTF_CSRF_TIME_LIMIT = None  # No time limit for CSRF tokens
-    WTF_CSRF_SSL_STRICT = False  # Allow CSRF over HTTP
+    WTF_CSRF_ENABLED = False  # Disable CSRF protection
+    WTF_CSRF_CHECK_DEFAULT = False  # Don't check CSRF by default
     
     SESSION_COOKIE_SECURE = False  # Set to True if using HTTPS only
     SESSION_COOKIE_HTTPONLY = True
@@ -27,7 +25,7 @@ class Config:
     
     # File uploads
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'static', 'uploads')
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     

@@ -73,11 +73,6 @@ def create_app():
     upload_folder = os.path.join(base_dir, 'static/uploads')
     os.makedirs(upload_folder, exist_ok=True)
     
-    # Make CSRF token available globally in templates
-    @app.context_processor
-    def inject_csrf_token():
-        return dict(csrf_token=csrf.generate_csrf)
-    
     # Setup logging
     if not app.debug:
         log_dir = os.path.join(base_dir, 'logs')

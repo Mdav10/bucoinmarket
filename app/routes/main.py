@@ -8,8 +8,12 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
-    products = Product.query.filter_by(is_active=True).order_by(Product.created_at.desc()).limit(12).all()
+    try:
+        products = Product.query.filter_by(is_active=True).order_by(Product.created_at.desc()).limit(12).all()
+    except:
+        products = []
     
+    # Get settings with fallback
     site_name = Setting.query.filter_by(setting_key='site_name').first()
     site_description = Setting.query.filter_by(setting_key='site_description').first()
     exchange_rate = Setting.query.filter_by(setting_key='buc_exchange_rate').first()
@@ -31,9 +35,14 @@ def contact():
 @main_bp.route('/dashboard')
 @login_required
 def dashboard():
-    total_orders = Order.query.filter_by(user_id=current_user.id).count()
-    recent_orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(5).all()
-    transactions = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()).limit(10).all()
+    try:
+        total_orders = Order.query.filter_by(user_id=current_user.id).count()
+        recent_orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(5).all()
+        transactions = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()).limit(10).all()
+    except:
+        total_orders = 0
+        recent_orders = []
+        transactions = []
     
     balance = current_user.wallet_balance
     

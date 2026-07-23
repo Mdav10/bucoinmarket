@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, login_required, current_user
-from app import db, csrf
+from app import db
 from app.models import User
 from datetime import datetime
 import re
@@ -16,7 +16,6 @@ def is_valid_username(username):
     return re.match(pattern, username)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
-@csrf.exempt  # Temporarily disable CSRF for login
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -52,7 +51,6 @@ def login():
     return render_template('auth/login.html')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
-@csrf.exempt  # Temporarily disable CSRF for registration
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
