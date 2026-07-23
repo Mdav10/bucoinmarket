@@ -1,7 +1,7 @@
 from app import db
 from flask_login import UserMixin
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+import hashlib
 import secrets
 
 class User(UserMixin, db.Model):
@@ -26,10 +26,34 @@ class User(UserMixin, db.Model):
     products = db.relationship('Product', backref='creator', lazy=True)
     
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        """Hash password using SHA256"""
+        # Use SHA256 instead of bcrypt to avoid compatibility issues
+        salt = secrets.token_hex(16)
+        hash_obj = hashlib.sha256()
+        hash_obj.update((salt + password).encode('utf-8'))
+        self.password_hash = f"sha256${salt}${hash_obj.hexdigest()}"
     
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        """Check password against hash"""
+        if not self.password_hash:
+            return False
+        
+        try:
+            # Parse the stored hash
+            parts = self.password_hash.split('$')
+            if len(parts) == 3 and parts[0] == 'sha256':
+                _, salt, stored_hash = parts
+                # Compute hash of provided password with same salt
+                hash_obj = hashlib.sha256()
+                hash_obj.update((salt + password).encode('utf-8'))
+                computed_hash = hash_obj.hexdigest()
+                return computed_hash == stored_hash
+            else:
+                # Fallback for bcrypt or other formats
+                from werkzeug.security import check_password_hash
+                return check_password_hash(self.password_hash, password)
+        except Exception as e:
+            return False
     
     def has_role(self, role):
         return self.role == role or self.role == 'superadmin'
