@@ -27,7 +27,7 @@
                     </li>
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">
                                 <i class="bi bi-speedometer2"></i> Dashboard
                             </a>
                         </li>
@@ -59,7 +59,7 @@
                                 <i class="bi bi-person-circle"></i> {{ current_user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('wallet.index') }}"><i class="bi bi-wallet2"></i> Wallet</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('orders.history') }}"><i class="bi bi-list-ul"></i> Orders</a></li>
                                 <li><hr class="dropdown-divider"></li>
