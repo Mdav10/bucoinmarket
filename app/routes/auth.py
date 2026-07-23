@@ -16,6 +16,7 @@ def is_valid_username(username):
     return re.match(pattern, username)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
+@csrf.exempt  # Temporarily disable CSRF for login
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -51,6 +52,7 @@ def login():
     return render_template('auth/login.html')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
+@csrf.exempt  # Temporarily disable CSRF for registration
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
