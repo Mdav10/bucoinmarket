@@ -15,9 +15,10 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-this')
     WTF_CSRF_ENABLED = True
     WTF_CSRF_SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-this')
-    WTF_CSRF_TIME_LIMIT = 3600  # 1 hour
+    WTF_CSRF_TIME_LIMIT = None  # No time limit for CSRF tokens
+    WTF_CSRF_SSL_STRICT = False  # Allow CSRF over HTTP
     
-    SESSION_COOKIE_SECURE = True if os.environ.get('FLASK_ENV') == 'production' else False
+    SESSION_COOKIE_SECURE = False  # Set to True if using HTTPS only
     SESSION_COOKIE_HTTPONLY = True
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
     
