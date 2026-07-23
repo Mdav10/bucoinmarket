@@ -13,6 +13,10 @@ class Config:
     
     # Security
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-this')
+    WTF_CSRF_ENABLED = True
+    WTF_CSRF_SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-this')
+    WTF_CSRF_TIME_LIMIT = 3600  # 1 hour
+    
     SESSION_COOKIE_SECURE = True if os.environ.get('FLASK_ENV') == 'production' else False
     SESSION_COOKIE_HTTPONLY = True
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
