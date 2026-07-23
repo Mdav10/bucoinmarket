@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask
@@ -15,14 +16,18 @@ csrf = CSRFProtect()
 migrate = Migrate()
 
 def create_app():
-    # Get the absolute path to the PROJECT root (not app folder)
+    # Get the absolute path to the PROJECT root
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Explicitly set template and static folders
     template_dir = os.path.join(base_dir, 'templates')
     static_dir = os.path.join(base_dir, 'static')
     
+    # Create the Flask app with explicit paths
     app = Flask(__name__,
                 template_folder=template_dir,
-                static_folder=static_dir)
+                static_folder=static_dir,
+                static_url_path='/static')
     
     app.config.from_object('config.config.Config')
     
@@ -38,7 +43,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-    csrf.init_app(app)  # Initialize CSRF protection
+    csrf.init_app(app)
     migrate.init_app(app, db)
     
     # Configure login manager
@@ -85,8 +90,13 @@ def create_app():
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
         app.logger.setLevel(logging.INFO)
-        app.logger.info('BuCoinMarket startup')
+        
+        # Log important paths
+        app.logger.info(f'Base directory: {base_dir}')
         app.logger.info(f'Template folder: {template_dir}')
         app.logger.info(f'Static folder: {static_dir}')
+        app.logger.info(f'Templates exist: {os.path.exists(template_dir)}')
+        if os.path.exists(template_dir):
+            app.logger.info(f'Template files: {os.listdir(template_dir)}')
     
     return app
